@@ -53,7 +53,7 @@
         <section class="panel" aria-labelledby="ink-title"><div class="panel-hd"><div><span class="kicker">01 / INK</span><h2 id="ink-title">손글씨 입력</h2><p class="subcopy">안내 칸마다 글자 하나씩 쓰세요. 변환 후보는 구절 단위로 나타납니다.</p></div><span class="step" id="stroke-count">0 strokes</span></div>
           <div class="tools"><button class="icon-btn selected" id="tool-pen" title="펜" aria-label="펜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20l5-1 11-11-4-4L5 15l-1 5zm10-14l4 4"/></svg> 펜</button><button class="icon-btn" id="tool-erase" title="지우개" aria-label="지우개"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 13l-7 7H6l-4-4 12-12 6 6-6 6M10 20h11"/></svg> 지우개</button><span class="tool-divider"></span><button class="icon-btn" id="undo" title="마지막 획 되돌리기" aria-label="되돌리기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-2"/></svg></button><button class="icon-btn" id="redo" title="다시 실행" aria-label="다시 실행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 14l5-5-5-5m5 5H9a5 5 0 000 10h2"/></svg></button><button class="icon-btn" id="clear-ink" title="필기 모두 지우기" aria-label="필기 모두 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16m-14 0l1 14h10l1-14M9 7V4h6v3m-5 4v7m4-7v7"/></svg></button><span class="flexgap"></span><label class="penonly"><input type="checkbox" id="pen-only"/> S펜만 입력</label></div>
           <div class="canvas-wrap"><div class="canvas-window" id="canvas-window"><div class="canvas-header"><span>HANDWRITING GRID · 14 CHARACTERS</span><span>左 → 右</span></div><div class="canvas-inner"><canvas id="ink-canvas" width="1120" height="183" aria-label="일본어 손글씨 입력 영역"></canvas><div class="empty-hint" id="empty-hint"><span class="glyph">あ</span><p>펜으로 한 글자씩 적어 보세요<br/>예: きょうはいいてんき</p></div></div></div></div>
-          <div class="canvas-footer"><div class="canvas-tip">✦ <span>왼쪽부터 필기 · 같은 칸의 획은 자동 결합</span></div><div class="canvas-actions"><button type="button" class="button" id="scroll-grid" title="오른쪽 칸 보기">다음 칸 →</button><button type="button" class="button" id="manual-mode">직접 입력</button><button type="button" class="button primary" id="recognize"><span id="recognize-label">✧ &nbsp; 필기 인식하기</span></button></div></div><div class="statusline" role="status" aria-live="polite"><span id="status-dot" class="statusdot"></span><span id="status-text">필기 입력 준비 완료 · 인식 모델은 첫 실행 시 온라인에서 불러옵니다.</span></div>
+          <div class="canvas-footer"><div class="canvas-tip">✦ <span>S펜은 화면에 닿을 때만 필기 · 호버 입력 제외</span></div><div class="canvas-actions"><button type="button" class="button" id="scroll-grid" title="오른쪽 칸 보기">다음 칸 →</button><button type="button" class="button" id="manual-mode">직접 입력</button><button type="button" class="button primary" id="recognize"><span id="recognize-label">✧ &nbsp; 필기 인식하기</span></button></div></div><div class="statusline" role="status" aria-live="polite"><span id="status-dot" class="statusdot"></span><span id="status-text">필기 입력 준비 완료 · 인식 모델은 첫 실행 시 온라인에서 불러옵니다.</span></div>
         </section>
         <section class="panel" aria-labelledby="compose-title"><div class="panel-hd"><div><span class="kicker">02 / COMPOSE</span><h2 id="compose-title">구절 변환</h2><p class="subcopy">구절을 선택하고 아래 후보 중 하나를 고르세요.</p></div><span class="step">IME-STYLE</span></div><div class="composer-body"><div class="composition-bar" id="composition" aria-label="변환 중인 일본어 문자열"><span class="composition-empty">인식 결과가 여기에 표시됩니다.</span></div><div class="sublabel">変換候補 / 선택한 구절의 변환 후보</div><div class="candidate-list" id="candidates"><span class="muted">필기를 인식하거나 예시를 불러오세요.</span></div><div class="candidate-edit"><input id="candidate-manual" type="text" lang="ja" placeholder="후보가 없으면 직접 수정" aria-label="선택한 구절 직접 수정"/><button type="button" class="button" id="apply-manual">수정 적용</button></div><div class="composer-bottom"><span class="secondaryhelp">구절 사이의 작은 경계를 눌러 합칠 수 있고, 구절 선택 후 '구절 나누기'로 분할할 수 있습니다.</span><div class="composer-buttons"><button class="button" id="split-phrase">구절 나누기</button><button class="button accent" id="commit-text">텍스트에 추가 ↗</button></div></div></div></section>
         <section class="panel" aria-labelledby="editor-title"><div class="panel-hd"><div><span class="kicker">03 / DOCUMENT</span><h2 id="editor-title">나의 텍스트</h2><p class="subcopy">확정된 일본어 문장을 저장하고 복사하세요. 브라우저에 자동 저장됩니다.</p></div><span class="step" id="char-count">0 chars</span></div><div class="editor-body"><textarea id="text-editor" lang="ja" spellcheck="false" placeholder="ここに日本語が入ります。"></textarea><div class="editor-actions"><span class="muted">LOCAL AUTOSAVE · 이 브라우저에 저장</span><div class="editor-buttons"><button type="button" class="button small" id="save-note">기록 저장</button><button type="button" class="button small" id="export-txt">.txt 내보내기</button><button type="button" class="button small primary" id="copy-text">복사</button></div></div></div></section>
@@ -188,9 +188,22 @@ function eraseAt(point){
   state.strokes.forEach((s,i)=>s.points.forEach(p=>{const d=(p.x-point.x)**2+(p.y-point.y)**2;if(d<dist){best=i;dist=d;}}));
   if(best!==-1){state.strokes.splice(best,1);state.redo=[];redraw();}
 }
+// S Pen hover (including the barrel button while hovering) must NEVER draw.
+// Pointer Events: pen tip contact has buttons bit 1 and pressure > 0;
+// hovering has buttons=0/pressure=0, while a hovering barrel button can set buttons=2.
+function penTipIsDown(e){
+  return (e.buttons & 1)!==0 && (e.pointerType!=='pen' || e.pressure>0);
+}
+function finishPointer(pointerId){
+  if(pointerId!==state.activePointer)return;
+  if(state.drawing){state.strokes.push(state.drawing);state.redo=[];state.drawing=null;}
+  state.activePointer=null;
+  try{if(canvas.hasPointerCapture(pointerId))canvas.releasePointerCapture(pointerId);}catch{}
+  redraw();
+}
 canvas.addEventListener('pointerdown',e=>{
   if($('pen-only').checked && e.pointerType!=='pen')return;
-  if(e.button!==0 && e.pointerType==='mouse')return;
+  if(e.button!==0 || !penTipIsDown(e))return;
   if(state.activePointer!==null)return;
   const p=canvasPosition(e);if(!withinCanvas(p))return;
   e.preventDefault();state.activePointer=e.pointerId;
@@ -200,6 +213,9 @@ canvas.addEventListener('pointerdown',e=>{
 });
 canvas.addEventListener('pointermove',e=>{
   if(e.pointerId!==state.activePointer)return;
+  // If pointerup was lost, the first hover event still ends the stroke.
+  // Do not append the hover position; it would create a giant connecting line.
+  if(!penTipIsDown(e)){finishPointer(e.pointerId);return;}
   e.preventDefault();
   const p=canvasPosition(e);
   if(state.tool==='erase'){if(withinCanvas(p))eraseAt(p);return;}
@@ -209,13 +225,11 @@ canvas.addEventListener('pointermove',e=>{
     state.drawing.points.push({x:Math.max(0,Math.min(CANVAS_W,p.x)),y:Math.max(0,Math.min(CANVAS_H,p.y)),t:p.t});redraw();
   }
 });
-function endPointer(e){
-  if(e.pointerId!==state.activePointer)return;
-  if(state.drawing){state.strokes.push(state.drawing);state.redo=[];state.drawing=null;redraw();}
-  state.activePointer=null;
-  try{canvas.releasePointerCapture(e.pointerId);}catch{}
-}
-canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);
+canvas.addEventListener('pointerup',e=>finishPointer(e.pointerId));
+canvas.addEventListener('pointercancel',e=>finishPointer(e.pointerId));
+canvas.addEventListener('lostpointercapture',e=>finishPointer(e.pointerId));
+window.addEventListener('blur',()=>{if(state.activePointer!==null)finishPointer(state.activePointer);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden && state.activePointer!==null)finishPointer(state.activePointer);});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 $('tool-pen').onclick=()=>setTool('pen');$('tool-erase').onclick=()=>setTool('erase');
 function setTool(tool){state.tool=tool;$('tool-pen').classList.toggle('selected',tool==='pen');$('tool-erase').classList.toggle('selected',tool==='erase');}
