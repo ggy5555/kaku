@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f8f5ef" />
+  <meta name="description" content="KAKU — 일본어 손글씨 입력과 구절 단위 변환 후보를 위한 실험적 워크스페이스." />
+  <title>KAKU — 書く。 Japanese Handwriting Studio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&display=swap');
+    :root{--bg:#f8f6f1;--paper:#fffefa;--ink:#26241f;--dim:#8a877c;--border:#e7e3d9;--soft:#f1eee6;--accent:#c76746;--accent-light:#fff1e9;--forest:#496a56;--shadow:0 10px 36px rgba(32,27,20,.035);--serif:'Noto Serif JP','Yu Mincho',serif;--sans:'DM Sans','Noto Sans JP',sans-serif}
+    *{box-sizing:border-box}
+    html{font-size:15px} body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);min-width:340px}
+    button,input,textarea{font:inherit} button{cursor:pointer} button:disabled{opacity:.45;cursor:not-allowed}
+    button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .layout{display:grid;grid-template-columns:228px minmax(0,1fr);max-width:1800px;margin:auto;min-height:100vh}
+    .sidebar{border-right:1px solid var(--border);padding:32px 19px;background:#f6f3ec;display:flex;flex-direction:column;gap:26px}
+    .logo{display:flex;align-items:center;gap:12px;padding:1px 7px}.logo-mark{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:13px;background:var(--ink);color:#fff8f0;font:700 24px var(--serif)}.logo-copy strong{font:700 21px var(--sans);letter-spacing:1.6px;display:block}.logo-copy small{display:block;font-size:10px;color:var(--dim);letter-spacing:.2px;margin-top:1px}
+    .nav-heading{font-size:10px;letter-spacing:2.1px;font-weight:700;color:#9b968a;text-transform:uppercase;padding:0 13px;margin-bottom:10px}.nav-list{display:grid;gap:5px}.nav-item{height:42px;width:100%;border:0;background:transparent;border-radius:10px;text-align:left;padding:0 13px;display:flex;align-items:center;gap:12px;color:#6e6a5f;font-size:13px;font-weight:600}.nav-item.active{background:#eae5d9;color:#25221c}.nav-item svg{width:18px;height:18px;stroke-width:1.7}.nav-item:not(.active):hover{background:#efebe2}
+    .note-card{margin-top:auto;background:#eae6db;border:1px solid #e2ded2;border-radius:13px;padding:17px}.note-card .jp{font:600 19px var(--serif)}.note-card p{font-size:11px;line-height:1.8;color:#736e63;margin:9px 0 0}.tinyline{font-size:10px;color:#aaa599;padding:0 11px}
+    .main{padding:24px clamp(20px,3.8vw,60px) 46px;min-width:0}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:32px}.breadcrumbs{color:var(--dim);font-size:12px;display:flex;gap:9px;align-items:center}.breadcrumbs strong{color:#49463e;font-weight:600}.topright{display:flex;gap:12px;align-items:center}.badge{border:1px solid #d6dfd5;background:#f1f8ef;color:#59745c;padding:6px 11px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap}.avatar{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#e8d7bf;font:700 14px var(--serif)}
+    .hero{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:26px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:2.4px;color:var(--accent);margin-bottom:13px;text-transform:uppercase}.hero h1{font:600 clamp(31px,3.5vw,48px)/1.2 var(--serif);letter-spacing:-.9px;margin:0 0 12px}.hero h1 em{font-style:normal;color:var(--accent)}.hero p{margin:0;color:#7a756c;font-size:13px;line-height:1.8}.hero-kanji{font:500 90px/1 var(--serif);color:#ebe4d9;transform:rotate(-8deg);user-select:none;margin-right:30px}
+    .workspace{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(270px,.93fr);align-items:start;gap:21px}
+    .stack{display:grid;gap:20px;min-width:0}.panel{background:var(--paper);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);min-width:0;overflow:hidden}.panel-hd{padding:21px 22px 17px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.kicker{font-size:10px;letter-spacing:1.5px;font-weight:700;color:var(--accent);display:block;margin-bottom:5px}.panel h2{font:700 16px/1.4 var(--sans);margin:0}.subcopy{font-size:11px;color:#999286;line-height:1.65;margin:6px 0 0}.step{font-size:11px;color:#b1a99d;white-space:nowrap}.step strong{color:var(--accent)}
+    .tools{display:flex;gap:6px;flex-wrap:wrap;padding:0 18px 16px;align-items:center}.icon-btn{height:34px;min-width:34px;border:1px solid transparent;background:transparent;color:#777268;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;gap:7px;font-size:11px;font-weight:600;padding:0 9px}.icon-btn:hover{background:#f2eee7}.icon-btn.selected{background:#f9e9df;color:#b75535;border-color:#f0d2c1}.icon-btn svg{height:16px;width:16px;stroke-width:1.75}.tool-divider{height:21px;width:1px;background:#e9e4d9;margin:0 4px}.flexgap{flex:1}.penonly{display:flex;align-items:center;gap:7px;cursor:pointer;color:#8c877a;font-size:11px}.penonly input{accent-color:var(--accent);width:14px;height:14px}
+    .canvas-wrap{padding:0 19px}.canvas-window{background:#faf8f3;border:1px solid #e8e1d6;border-radius:11px;overflow-x:auto;overflow-y:hidden;position:relative;scrollbar-color:#d8d0c4 transparent;scrollbar-width:thin}.canvas-window:focus-within{outline:1px solid #d9b7a5}.canvas-header{font:600 9px/1 var(--sans);letter-spacing:1px;color:#b8b0a5;display:flex;align-items:center;justify-content:space-between;padding:10px 13px 2px}.canvas-inner{position:relative;width:1120px;height:183px;user-select:none}#ink-canvas{width:1120px;height:183px;display:block;touch-action:none;cursor:crosshair;user-select:none}.empty-hint{position:absolute;left:42px;top:57px;pointer-events:none;display:flex;gap:12px;align-items:center;color:#bdb5a9;transition:opacity .2s}.empty-hint .glyph{font:400 57px var(--serif);color:#e2dcd1}.empty-hint p{font-size:11px;line-height:1.8}
+    .canvas-footer{display:flex;justify-content:space-between;align-items:center;padding:10px 20px 18px;gap:12px;flex-wrap:wrap}.canvas-tip{font-size:11px;color:#a49d91;display:flex;align-items:center;gap:7px}.canvas-actions{display:flex;gap:8px;align-items:center}.button{display:inline-flex;justify-content:center;align-items:center;gap:7px;height:36px;border:1px solid var(--border);background:#fffefa;border-radius:9px;padding:0 14px;font-size:11px;font-weight:700;color:#625f55;white-space:nowrap}.button:hover{background:#f7f4ef}.button.primary{background:var(--ink);border-color:var(--ink);color:#fff}.button.primary:hover{background:#454038}.button.accent{background:var(--accent);border-color:var(--accent);color:#fff}.button.accent:hover{background:#b65335}.button svg{width:14px;height:14px}.button.small{height:30px;font-size:10px;padding:0 11px}.button:disabled{opacity:.5}.spinner{width:13px;height:13px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .statusline{border-top:1px solid #f0ede6;padding:11px 20px;display:flex;gap:8px;align-items:center;color:#858074;font-size:11px;background:#fffdf9;line-height:1.6}.statusdot{height:7px;width:7px;border-radius:50%;background:#b7b3a8;flex:none}.statusdot.ready{background:#6a976f}.statusdot.error{background:#c56c4b}
+    .composer-body{padding:0 21px 22px}.composer-instruction{font-size:11px;color:#999186;margin-bottom:11px}.composition-bar{min-height:63px;display:flex;align-items:center;gap:3px;flex-wrap:wrap;border:1px solid #ebe6dc;background:#fcfaf6;border-radius:10px;padding:10px}.phrase{border:1px solid transparent;border-radius:6px;background:transparent;padding:6px 8px;color:#4b463d;display:inline-flex;gap:0;align-items:center;font:600 23px/1.2 var(--serif);white-space:nowrap}.phrase.selected{background:var(--accent-light);border-color:#e8ba9f;color:#9e472e}.phrase:hover{border-color:#e7cab9}.phrase-join{background:transparent;border:0;color:#baa99f;font-size:12px;padding:4px 1px;margin:0 -1px}.phrase-join:hover{color:var(--accent)}.composition-empty{font:13px var(--serif);color:#c4bcb1;padding:8px 10px}.sublabel{font-size:10px;font-weight:700;color:#9f978b;letter-spacing:1.3px;margin:18px 0 10px}.candidate-list{display:flex;gap:8px;flex-wrap:wrap;min-height:43px;align-items:center}.candidate{height:40px;border-radius:8px;border:1px solid #e7e0d6;background:white;padding:0 14px;font:600 17px var(--serif);color:#3e382f;position:relative}.candidate:hover{border-color:var(--accent);background:#fff9f6}.candidate.current{border-color:#d8a389;background:#fff2e9}.candidate .rank{font:700 9px var(--sans);color:#b1a69c;vertical-align:top;margin-right:8px}.candidate-edit{display:flex;gap:8px;margin-top:12px}.candidate-edit input{min-width:0;flex:1;border:1px solid #e5dfd3;border-radius:8px;background:#fffdf9;padding:0 12px;color:#494339;height:35px;font:15px var(--serif)}.composer-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}.secondaryhelp{font-size:10px;line-height:1.6;color:#aaa398;max-width:310px}.composer-buttons{display:flex;gap:8px}
+    .editor-body{padding:0 21px 21px}#text-editor{display:block;width:100%;min-height:170px;border:1px solid #eae3d8;background:#fcfaf6;border-radius:10px;resize:vertical;outline:none;padding:18px;font:500 21px/1.9 var(--serif);color:#342f2a}#text-editor::placeholder{color:#c8c0b5}#text-editor:focus{border-color:#d8ab92}.editor-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:11px;flex-wrap:wrap}.muted{font-size:10px;color:#a69e92}.editor-buttons{display:flex;gap:7px}
+    .sidepanel .panel-hd{padding-bottom:14px}.sidepanel .inner{padding:0 20px 19px}.sidepanel ol{list-style:none;padding:0;margin:2px 0 0;display:grid;gap:16px}.sidepanel li{display:grid;grid-template-columns:25px 1fr;gap:11px}.num{height:25px;width:25px;border-radius:7px;background:#f4e9df;color:#b9684a;display:grid;place-items:center;font-size:10px;font-weight:800}.steptext strong{font-size:11px;display:block;margin-bottom:3px}.steptext span{font-size:11px;line-height:1.7;color:#938a7d}.line{height:1px;background:var(--border);margin:17px 0}
+    .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.demo-card{background:#faf8f3;border:1px solid #eae3d9;border-radius:9px;padding:13px 9px;text-align:left}.demo-card:hover{border-color:#d5a38a}.demo-card .jp{font:600 21px var(--serif);margin-bottom:5px}.demo-card small{font-size:10px;color:#a69f94}.model-info{font-size:11px;color:#8e867c;line-height:1.85}.model-info strong{color:#514c43}.model-info a{color:var(--accent)}.footer{display:flex;justify-content:space-between;gap:10px;margin-top:23px;color:#b2aa9e;font-size:10px;flex-wrap:wrap}
+    .archive-list{display:grid;gap:8px}.archive-entry{border:1px solid var(--border);border-radius:10px;background:#fcfaf7;padding:11px}.archive-entry .date{font-size:10px;color:#a19a91}.archive-entry .sample{font:14px var(--serif);margin:6px 0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.archive-entry .actions{display:flex;gap:6px}.archive-empty{font-size:11px;color:#b6ac9f;line-height:1.7}.hide{display:none!important}
+    .toast-wrap{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);z-index:50;pointer-events:none}.toast{background:#26231e;color:#fff;border-radius:11px;padding:11px 16px;box-shadow:0 14px 35px #0003;font-size:12px;max-width:min(90vw,540px);text-align:center}
+    .dialog-backdrop{position:fixed;inset:0;background:rgba(32,29,24,.4);display:grid;place-items:center;z-index:40;padding:20px}.dialog{width:min(480px,100%);background:#fffefa;border-radius:17px;padding:24px;box-shadow:0 20px 70px #0002}.dialog h3{margin:0 0 9px;font:700 19px var(--serif)}.dialog p{color:#847d70;font-size:12px;line-height:1.8}.dialog textarea{height:120px;resize:vertical;width:100%;border:1px solid var(--border);border-radius:9px;padding:12px;font:18px var(--serif);background:#faf8f3}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+    @media(max-width:1210px){.layout{grid-template-columns:192px minmax(0,1fr)}.main{padding:23px 20px 40px}.workspace{grid-template-columns:minmax(0,1fr)}.side-content{display:grid;grid-template-columns:1fr 1fr;gap:20px}.hero-kanji{display:none}}
+    @media(max-width:730px){.layout{display:block}.sidebar{height:70px;padding:0 18px;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--border)}.sidebar .navgroup,.sidebar .note-card,.sidebar .tinyline{display:none}.main{padding:19px 14px 30px}.topbar{margin-bottom:21px}.hero{margin-bottom:20px}.hero h1{font-size:31px}.hero p{font-size:12px}.side-content{display:grid;grid-template-columns:1fr;gap:18px}.workspace,.stack{gap:15px}.panel-hd{padding:18px 16px 13px}.canvas-wrap{padding:0 12px}.tools{padding:0 10px 10px}.canvas-footer{padding:9px 12px 13px}.canvas-tip{display:none}.composer-body,.editor-body{padding:0 14px 17px}.candidate{font-size:16px}.topright .badge{display:none}.breadcrumb-slash{display:none}.avatar{display:none}.composer-bottom{align-items:stretch}.composer-buttons{width:100%}.composer-buttons .button{flex:1}.hero .eyebrow{margin-bottom:9px}}
+    @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo"><div class="logo-mark">書</div><div class="logo-copy"><strong>KAKU</strong><small>日本語 handwriting studio</small></div></div>
+    <div class="navgroup"><div class="nav-heading">Workspace</div><nav class="nav-list" aria-label="워크스페이스"><button type="button" class="nav-item active" id="nav-write"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19l7-7 3 3-7 7H12v-3zM4 4h9m-9 5h6m-6 5h6M3 20h5"/></svg> 필기 워크스페이스</button><button type="button" class="nav-item" id="nav-archive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18m-12 5h6"/></svg> 저장 기록</button><button type="button" class="nav-item" id="nav-guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V6a2 2 0 012-2h13v15H6a2 2 0 000 4h13"/><path d="M7 9h8M7 13h6"/></svg> 사용 방법</button></nav></div>
+    <div class="note-card"><div class="jp">一文字ずつ、<br/>一緒に。</div><p>한 글자씩 쓰되,<br/>변환은 문맥에 맞게.<br/>손글씨와 텍스트 사이의 작업실.</p></div><div class="tinyline">KAKU LAB · Prototype 01</div>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div class="breadcrumbs">Studio <span class="breadcrumb-slash">/</span> <strong>Handwriting</strong></div><div class="topright"><span class="badge" id="model-badge">● LOCAL-FIRST</span><span class="avatar">か</span></div></div>
+    <section class="hero"><div><div class="eyebrow">日本語入力 ・ Japanese input</div><h1>생각의 흐름대로, <em>書く。</em></h1><p>손으로 쓰고, 구절로 고르고, 텍스트로 남기는 일본어 필기 도구.</p></div><div class="hero-kanji">書</div></section>
+    <div id="write-view" class="workspace">
+      <div class="stack">
+        <section class="panel" aria-labelledby="ink-title"><div class="panel-hd"><div><span class="kicker">01 / INK</span><h2 id="ink-title">손글씨 입력</h2><p class="subcopy">안내 칸마다 글자 하나씩 쓰세요. 변환 후보는 구절 단위로 나타납니다.</p></div><span class="step" id="stroke-count">0 strokes</span></div>
+          <div class="tools"><button class="icon-btn selected" id="tool-pen" title="펜" aria-label="펜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20l5-1 11-11-4-4L5 15l-1 5zm10-14l4 4"/></svg> 펜</button><button class="icon-btn" id="tool-erase" title="지우개" aria-label="지우개"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 13l-7 7H6l-4-4 12-12 6 6-6 6M10 20h11"/></svg> 지우개</button><span class="tool-divider"></span><button class="icon-btn" id="undo" title="마지막 획 되돌리기" aria-label="되돌리기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-2"/></svg></button><button class="icon-btn" id="redo" title="다시 실행" aria-label="다시 실행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 14l5-5-5-5m5 5H9a5 5 0 000 10h2"/></svg></button><button class="icon-btn" id="clear-ink" title="필기 모두 지우기" aria-label="필기 모두 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16m-14 0l1 14h10l1-14M9 7V4h6v3m-5 4v7m4-7v7"/></svg></button><span class="flexgap"></span><label class="penonly"><input type="checkbox" id="pen-only"/> S펜만 입력</label></div>
+          <div class="canvas-wrap"><div class="canvas-window" id="canvas-window"><div class="canvas-header"><span>HANDWRITING GRID · 14 CHARACTERS</span><span>左 → 右</span></div><div class="canvas-inner"><canvas id="ink-canvas" width="1120" height="183" aria-label="일본어 손글씨 입력 영역"></canvas><div class="empty-hint" id="empty-hint"><span class="glyph">あ</span><p>펜으로 한 글자씩 적어 보세요<br/>예: きょうはいいてんき</p></div></div></div></div>
+          <div class="canvas-footer"><div class="canvas-tip">✦ <span>왼쪽부터 필기 · 같은 칸의 획은 자동 결합</span></div><div class="canvas-actions"><button type="button" class="button" id="scroll-grid" title="오른쪽 칸 보기">다음 칸 →</button><button type="button" class="button" id="manual-mode">직접 입력</button><button type="button" class="button primary" id="recognize"><span id="recognize-label">✧ &nbsp; 필기 인식하기</span></button></div></div><div class="statusline" role="status" aria-live="polite"><span id="status-dot" class="statusdot"></span><span id="status-text">필기 입력 준비 완료 · 인식 모델은 첫 실행 시 온라인에서 불러옵니다.</span></div>
+        </section>
+        <section class="panel" aria-labelledby="compose-title"><div class="panel-hd"><div><span class="kicker">02 / COMPOSE</span><h2 id="compose-title">구절 변환</h2><p class="subcopy">구절을 선택하고 아래 후보 중 하나를 고르세요.</p></div><span class="step">IME-STYLE</span></div><div class="composer-body"><div class="composition-bar" id="composition" aria-label="변환 중인 일본어 문자열"><span class="composition-empty">인식 결과가 여기에 표시됩니다.</span></div><div class="sublabel">変換候補 / 선택한 구절의 변환 후보</div><div class="candidate-list" id="candidates"><span class="muted">필기를 인식하거나 예시를 불러오세요.</span></div><div class="candidate-edit"><input id="candidate-manual" type="text" lang="ja" placeholder="후보가 없으면 직접 수정" aria-label="선택한 구절 직접 수정"/><button type="button" class="button" id="apply-manual">수정 적용</button></div><div class="composer-bottom"><span class="secondaryhelp">구절 사이의 작은 경계를 눌러 합칠 수 있고, 구절 선택 후 '구절 나누기'로 분할할 수 있습니다.</span><div class="composer-buttons"><button class="button" id="split-phrase">구절 나누기</button><button class="button accent" id="commit-text">텍스트에 추가 ↗</button></div></div></div></section>
+        <section class="panel" aria-labelledby="editor-title"><div class="panel-hd"><div><span class="kicker">03 / DOCUMENT</span><h2 id="editor-title">나의 텍스트</h2><p class="subcopy">확정된 일본어 문장을 저장하고 복사하세요. 브라우저에 자동 저장됩니다.</p></div><span class="step" id="char-count">0 chars</span></div><div class="editor-body"><textarea id="text-editor" lang="ja" spellcheck="false" placeholder="ここに日本語が入ります。"></textarea><div class="editor-actions"><span class="muted">LOCAL AUTOSAVE · 이 브라우저에 저장</span><div class="editor-buttons"><button type="button" class="button small" id="save-note">기록 저장</button><button type="button" class="button small" id="export-txt">.txt 내보내기</button><button type="button" class="button small primary" id="copy-text">복사</button></div></div></div></section>
+      </div>
+      <div class="stack side-content">
+        <section class="panel sidepanel" id="guide-panel"><div class="panel-hd"><div><span class="kicker">QUICK START</span><h2>이렇게 사용해요</h2></div><span class="step">3 STEPS</span></div><div class="inner"><ol><li><span class="num">01</span><div class="steptext"><strong>한 칸에 한 글자</strong><span>S펜 또는 마우스로 왼쪽부터 필기하세요. 칸을 넘는 긴 획도 시작한 칸에 속합니다.</span></div></li><li><span class="num">02</span><div class="steptext"><strong>문자 인식</strong><span>인식 버튼을 누르면 브라우저에서 모델이 각 글자를 분석합니다.</span></div></li><li><span class="num">03</span><div class="steptext"><strong>구절 후보 선택</strong><span>한자와 가나가 헷갈리면 후보를 눌러 수정한 뒤 문서에 추가하세요.</span></div></li></ol><div class="line"></div><div class="sublabel">인터랙티브 예시</div><div class="demo-grid"><button type="button" class="demo-card" id="demo-weather"><div class="jp">今日は天気</div><small>문장 · 구절 변환</small></button><button type="button" class="demo-card" id="demo-confusable"><div class="jp">カ / 力</div><small>유사 글자 · 후보 선택</small></button></div></div></section>
+        <section class="panel sidepanel"><div class="panel-hd"><div><span class="kicker">ENGINE NOTES</span><h2>인식 엔진</h2></div></div><div class="inner"><div class="model-info"><strong>ONNX Runtime Web</strong>과 공개 일본어 손글씨 단일 문자 모델을 사용합니다. 인식 연산은 기기에서 처리하지만, 첫 실행 때 모델 파일을 내려받으므로 인터넷 연결이 필요합니다.<div class="line"></div><strong>현재 제한</strong><br/>한 칸에 한 글자씩 입력해야 하며, 작은 가나·구두점·숫자·일부 한자와 긴 문장 자동 구문 분석은 미지원 또는 정확도가 제한됩니다. 후보 사전은 초기 데모 규모입니다.<div class="line"></div><a href="https://huggingface.co/LT8/japanese-handwriting-onnx" target="_blank" rel="noopener noreferrer">모델 정보 ↗</a></div></div></section>
+        <section class="panel sidepanel" id="archive-panel"><div class="panel-hd"><div><span class="kicker">MY NOTES</span><h2>최근 저장 기록</h2></div><button type="button" class="button small" id="refresh-archive">새로고침</button></div><div class="inner"><div class="archive-list" id="archive-list"><div class="archive-empty">아직 저장한 기록이 없습니다.</div></div></div></section>
+      </div>
+    </div>
+    <div class="footer"><span>KAKU · Handwriting-to-text experimental prototype</span><span>書く、選ぶ、残す。</span></div>
+  </main>
+</div>
+<div class="toast-wrap" id="toast-wrap" aria-live="polite"></div>
+<div class="dialog-backdrop hide" id="manual-dialog"><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><h3 id="dialog-title">직접 입력 모드</h3><p>네트워크 또는 모델 문제로 인식이 불가능할 때도 구절 변환을 시험할 수 있어요. 직접 입력한 텍스트는 AI 인식 결과로 표시되지 않습니다.</p><textarea id="manual-compose" lang="ja" placeholder="きょうはいいてんき"></textarea><div class="dialog-actions"><button class="button" id="cancel-dialog">닫기</button><button class="button accent" id="confirm-dialog">구절 변환하기</button></div></div></div>
+<script>
+/* KAKU — Japanese handwriting composer · Prototype 01
+   No API keys. ONNX model and runtime are fetched from their public upstreams.
+   The OCR model classifies individual characters, not complete lines. */
+'use strict';
+
+const $ = id => document.getElementById(id);
+const CELL_W = 80, CELL_COUNT = 14, CANVAS_W = CELL_W * CELL_COUNT, CANVAS_H = 183;
+const MODEL_ROOT = 'https://huggingface.co/LT8/japanese-handwriting-onnx/resolve/main/';
+const ORT_ROOT = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/';
+const STORAGE_EDITOR = 'kaku.editor.v1', STORAGE_ARCHIVE = 'kaku.archive.v1';
+const canvas = $('ink-canvas'), context = canvas.getContext('2d', {alpha:false});
+const state = {
+  strokes:[], redo:[], activePointer:null, drawing:null, tool:'pen',
+  units:[], boundaries:new Set(), selected:null, overrides:new Map(), splitMode:false,
+  session:null, labels:null, modelLoading:null, recognitionRunning:false
+};
+
+// Conservative, hand-curated initial IME dictionary — not a full Japanese IME.
+const LEXICON = {
+ 'きょう':['今日','京'], 'きょうは':['今日は','京は'], 'あした':['明日'], 'あしたは':['明日は'],
+ 'てんき':['天気'], 'いい':['良い'], 'いいてんき':['いい天気'], 'わたし':['私'],
+ 'わたしは':['私は'], 'わたしの':['私の'], 'にほん':['日本'], 'にほんご':['日本語'],
+ 'にほんへ':['日本へ'], 'にほんは':['日本は'], 'べんきょう':['勉強'],
+ 'べんきょうする':['勉強する'], 'かんじ':['漢字'], 'ひらがな':['平仮名'],
+ 'かたかな':['片仮名'], 'ことば':['言葉'], 'こと':['事'], 'かく':['書く','描く'],
+ 'かいた':['書いた'], 'かきたい':['書きたい'], 'よむ':['読む'], 'ほん':['本'],
+ 'すき':['好き'], 'すきです':['好きです'], 'だいすき':['大好き'],
+ 'ありがとう':['有難う'], 'こんにちは':['こんにちは'], 'さようなら':['さようなら'],
+ 'おはよう':['お早う'], 'こんばんは':['今晩は'], 'ねこ':['猫'], 'いぬ':['犬'],
+ 'みず':['水'], 'はな':['花','鼻'], 'ひと':['人'], 'き':['木','気'],
+ 'がっこう':['学校'], 'せんせい':['先生'], 'がくせい':['学生'], 'ともだち':['友達'],
+ 'じかん':['時間'], 'せかい':['世界'], 'こころ':['心'], 'おもい':['思い'],
+ 'おんがく':['音楽'], 'うた':['歌'], 'うたう':['歌う'], 'うつくしい':['美しい'],
+ 'ここ':['此処'], 'どこ':['何処'], 'だれ':['誰'], 'なに':['何'], 'なん':['何'],
+ 'いつ':['何時'], 'でんしゃ':['電車'], 'えき':['駅'], 'くるま':['車'],
+ 'ゆめ':['夢'], 'ひかり':['光'], 'かぜ':['風'], 'あめ':['雨'], 'ゆき':['雪'],
+ 'そら':['空'], 'うみ':['海'], 'やま':['山'], 'かわ':['川'], 'ほし':['星'],
+ 'つき':['月'], 'ひ':['日','火'], 'あおい':['青い'], 'あかい':['赤い'],
+ 'あたらしい':['新しい'], 'ふるい':['古い'], 'おおきい':['大きい'], 'ちいさい':['小さい'],
+ 'ちから':['力'], 'か':['蚊','課','可'], 'きょうも':['今日も'], 'きょうの':['今日の'],
+ 'やさしい':['優しい','易しい'], 'ただしい':['正しい'], 'いきる':['生きる'],
+ 'せんねん':['千年'], 'おうごん':['黄金'], 'おもいで':['思い出'], 'ものがたり':['物語']
+};
+const CONFUSABLE_PAIRS = [
+ ['カ','力'],['ロ','口'],['ヘ','へ'],['ニ','二'],['エ','工'],['タ','夕'],
+ ['ト','卜'],['ハ','八'],['チ','千'],['オ','才'],['コ','己'],['リ','り'],
+ ['キ','き'],['ケ','け'],['セ','せ'],['ソ','そ'],['ア','了'],['ク','久'],
+ ['ミ','三'],['ヌ','又'],['ル','儿'],['ナ','十'],['へ','ヘ']
+];
+const SMALL_KANA = {'つ':'っ','や':'ゃ','ゆ':'ゅ','よ':'ょ','あ':'ぁ','い':'ぃ','う':'ぅ','え':'ぇ','お':'ぉ','わ':'ゎ','ツ':'ッ','ヤ':'ャ','ユ':'ュ','ヨ':'ョ','ア':'ァ','イ':'ィ','ウ':'ゥ','エ':'ェ','オ':'ォ'};
+const LARGE_KANA = Object.fromEntries(Object.entries(SMALL_KANA).map(([a,b])=>[b,a]));
+const CONFUSABLES = {};
+for (const [a,b] of CONFUSABLE_PAIRS) {
+  (CONFUSABLES[a] ??= []).push(b);
+  (CONFUSABLES[b] ??= []).push(a);
+}
+const particleCharacters = new Set(['は','が','を','に','で','も','へ','と','の','や']);
+
+function showToast(message){
+  const box = $('toast-wrap'); box.replaceChildren();
+  const toast = document.createElement('div'); toast.className='toast'; toast.textContent=message;
+  box.append(toast); clearTimeout(showToast.timer);
+  showToast.timer=setTimeout(()=>box.replaceChildren(),3500);
+}
+function setStatus(message, kind='neutral'){
+  $('status-text').textContent=message;
+  $('status-dot').className='statusdot'+(kind==='ready'?' ready':kind==='error'?' error':'');
+  $('model-badge').textContent=kind==='ready'?'● ENGINE READY':kind==='error'?'● MANUAL AVAILABLE':'● LOCAL-FIRST';
+}
+function safeGet(key, fallback){try { const val=localStorage.getItem(key);return val===null?fallback:JSON.parse(val); }catch{return fallback;}}
+function safeSet(key, value){try{localStorage.setItem(key,JSON.stringify(value));}catch{showToast('이 브라우저는 로컬 저장 기능을 사용할 수 없습니다.');}}
+function svgIcon(label){return label;}
+function makeEl(tag, className, text){const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e;}
+
+function initCanvas(){
+  const dpr=Math.max(1, Math.min(3,window.devicePixelRatio||1));
+  canvas.width=Math.round(CANVAS_W*dpr);canvas.height=Math.round(CANVAS_H*dpr);
+  context.setTransform(dpr,0,0,dpr,0,0); redraw();
+}
+function strokePath(ctx, stroke){
+  if(!stroke.points?.length)return;
+  ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#2e302b';ctx.fillStyle='#2e302b';
+  ctx.lineWidth=3.5;
+  const pts=stroke.points;
+  if(pts.length===1){ctx.beginPath();ctx.arc(pts[0].x,pts[0].y,1.8,0,2*Math.PI);ctx.fill();return;}
+  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+  for(let i=1;i<pts.length-1;i++){
+    const p=pts[i], n=pts[i+1];ctx.quadraticCurveTo(p.x,p.y,(p.x+n.x)/2,(p.y+n.y)/2);
+  }
+  const last=pts[pts.length-1];ctx.lineTo(last.x,last.y);ctx.stroke();
+}
+function redraw(){
+  context.fillStyle='#faf8f3';context.fillRect(0,0,CANVAS_W,CANVAS_H);
+  for(let i=0;i<CELL_COUNT;i++){
+    const x=i*CELL_W;
+    context.strokeStyle=i%2===0?'#e6e0d5':'#eeeae2';context.lineWidth=1;
+    context.setLineDash([2,5]); context.beginPath();context.moveTo(x+.5,17);context.lineTo(x+.5,165);context.stroke();
+    context.setLineDash([]);
+    context.font='10px DM Sans, sans-serif';context.fillStyle='#c7c0b6';context.fillText(String(i+1).padStart(2,'0'),x+10,174);
+    context.strokeStyle='#ece7df';context.beginPath();context.moveTo(x+6,90);context.lineTo(x+CELL_W-6,90);context.stroke();
+  }
+  context.setLineDash([2,5]);context.strokeStyle='#e8e2d8';context.beginPath();context.moveTo(CANVAS_W-.5,17);context.lineTo(CANVAS_W-.5,165);context.stroke();context.setLineDash([]);
+  for(const stroke of state.strokes) strokePath(context,stroke);
+  if(state.drawing) strokePath(context,state.drawing);
+  $('empty-hint').style.opacity=state.strokes.length||state.drawing?'0':'1';
+  $('stroke-count').textContent=`${state.strokes.length} strokes`;
+  $('undo').disabled=!state.strokes.length; $('redo').disabled=!state.redo.length;
+}
+function canvasPosition(e){
+  const rect=canvas.getBoundingClientRect();
+  return {x:(e.clientX-rect.left)*(CANVAS_W/rect.width),y:(e.clientY-rect.top)*(CANVAS_H/rect.height),t:performance.now()};
+}
+function withinCanvas(p){return p.x>=0&&p.x<CANVAS_W&&p.y>=0&&p.y<CANVAS_H;}
+function eraseAt(point){
+  let best=-1,dist=20*20;
+  state.strokes.forEach((s,i)=>s.points.forEach(p=>{const d=(p.x-point.x)**2+(p.y-point.y)**2;if(d<dist){best=i;dist=d;}}));
+  if(best!==-1){state.strokes.splice(best,1);state.redo=[];redraw();}
+}
+canvas.addEventListener('pointerdown',e=>{
+  if($('pen-only').checked && e.pointerType!=='pen')return;
+  if(e.button!==0 && e.pointerType==='mouse')return;
+  if(state.activePointer!==null)return;
+  const p=canvasPosition(e);if(!withinCanvas(p))return;
+  e.preventDefault();state.activePointer=e.pointerId;
+  try{canvas.setPointerCapture(e.pointerId);}catch{}
+  if(state.tool==='erase'){eraseAt(p);return;}
+  state.drawing={cell:Math.min(CELL_COUNT-1,Math.floor(p.x/CELL_W)),points:[p],created:Date.now()};redraw();
+});
+canvas.addEventListener('pointermove',e=>{
+  if(e.pointerId!==state.activePointer)return;
+  e.preventDefault();
+  const p=canvasPosition(e);
+  if(state.tool==='erase'){if(withinCanvas(p))eraseAt(p);return;}
+  if(!state.drawing)return;
+  const last=state.drawing.points.at(-1);
+  if((p.x-last.x)**2+(p.y-last.y)**2>=.45){
+    state.drawing.points.push({x:Math.max(0,Math.min(CANVAS_W,p.x)),y:Math.max(0,Math.min(CANVAS_H,p.y)),t:p.t});redraw();
+  }
+});
+function endPointer(e){
+  if(e.pointerId!==state.activePointer)return;
+  if(state.drawing){state.strokes.push(state.drawing);state.redo=[];state.drawing=null;redraw();}
+  state.activePointer=null;
+  try{canvas.releasePointerCapture(e.pointerId);}catch{}
+}
+canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+$('tool-pen').onclick=()=>setTool('pen');$('tool-erase').onclick=()=>setTool('erase');
+function setTool(tool){state.tool=tool;$('tool-pen').classList.toggle('selected',tool==='pen');$('tool-erase').classList.toggle('selected',tool==='erase');}
+$('undo').onclick=()=>{if(state.strokes.length){state.redo.push(state.strokes.pop());redraw();}};
+$('redo').onclick=()=>{if(state.redo.length){state.strokes.push(state.redo.pop());redraw();}};
+$('clear-ink').onclick=()=>{if(state.strokes.length){state.strokes=[];state.redo=[];redraw();showToast('필기 획을 지웠어요. 인식 결과는 유지됩니다.');}};
+$('scroll-grid').onclick=()=>{const box=$('canvas-window');if(box.scrollLeft+box.clientWidth>=box.scrollWidth-25)box.scrollTo({left:0,behavior:'smooth'});else box.scrollBy({left:box.clientWidth*.7,behavior:'smooth'});};
+window.addEventListener('resize',initCanvas);
+
+function toHiragana(s){return [...s].map(c=>{const code=c.codePointAt(0);return code>=0x30a1&&code<=0x30f6?String.fromCodePoint(code-0x60):c;}).join('');}
+function variantsForChar(base, predictions=[]){
+  const out=[base];
+  for(const alt of [...(CONFUSABLES[base]||[]),SMALL_KANA[base],LARGE_KANA[base]])if(alt && !out.includes(alt))out.push(alt);
+  for(const p of predictions)if(p.char && !out.includes(p.char) && out.length<7)out.push(p.char);
+  return out;
+}
+function createUnit(char, predictions=[], confidence=null){return {base:char, choices:variantsForChar(char,predictions), confidence};}
+function autoGroup(units){
+  const chars=units.map(u=>u.base), result=new Set();let pos=0;
+  while(pos<chars.length){
+    if(chars[pos]===' '){result.add(pos+1);pos++;continue;}
+    let best=0;
+    for(let len=Math.min(8,chars.length-pos);len>=2;len--){
+      const chunk=toHiragana(chars.slice(pos,pos+len).join(''));
+      if(LEXICON[chunk]){best=len;break;}
+    }
+    if(best){pos+=best;if(pos<chars.length)result.add(pos);continue;}
+    let end=Math.min(chars.length,pos+4);
+    for(let i=pos+1;i<end;i++){
+      if(particleCharacters.has(chars[i])&&i>pos){end=i+1;break;}
+      const a=chars[i-1],b=chars[i];
+      if(/\p{Script=Han}/u.test(a)&&/\p{Script=Hiragana}/u.test(b)){end=i+1;break;}
+    }
+    if(end<=pos)end=pos+1;
+    pos=end;if(pos<chars.length)result.add(pos);
+  }
+  result.delete(chars.length);result.delete(0);return result;
+}
+function setUnits(units,boundaries){
+  state.units=units;state.boundaries=boundaries?new Set(boundaries):autoGroup(units);
+  state.overrides.clear();state.splitMode=false;state.selected=units.length?`0-${firstBoundary()}`:null;
+  renderComposer();
+}
+function firstBoundary(){return [...state.boundaries, state.units.length].sort((a,b)=>a-b)[0]||0;}
+function getSegments(){
+  const lengths=[0,...[...state.boundaries].filter(n=>n>0&&n<state.units.length).sort((a,b)=>a-b),state.units.length];
+  return lengths.slice(1).map((end,i)=>{const start=lengths[i],key=`${start}-${end}`;
+    return {start,end,key,raw:state.units.slice(start,end).map(u=>u.base).join(''),text:state.overrides.get(key)??state.units.slice(start,end).map(u=>u.base).join('')};
+  }).filter(s=>s.end>s.start);
+}
+function selectedSegment(){const segments=getSegments();return segments.find(s=>s.key===state.selected)||segments[0]||null;}
+function resetSelection(start){state.selected=getSegments().find(s=>s.start===start)?.key||getSegments()[0]?.key||null;}
+function renderComposer(){
+  const node=$('composition');node.replaceChildren();const segments=getSegments();
+  if(!segments.length){node.append(makeEl('span','composition-empty','인식 결과가 여기에 표시됩니다.'));}
+  segments.forEach((segment,i)=>{
+    const btn=makeEl('button','phrase'+(segment.key===state.selected?' selected':''),segment.text);
+    btn.type='button';btn.title=`${segment.start+1}~${segment.end}번째 글자 구절 선택`;
+    btn.setAttribute('aria-pressed',segment.key===state.selected?'true':'false');
+    btn.addEventListener('click',()=>{state.selected=segment.key;state.splitMode=false;renderComposer();});node.append(btn);
+    if(i<segments.length-1){
+      const join=makeEl('button','phrase-join','│');join.type='button';join.title='이 경계 제거하여 앞뒤 구절 합치기';
+      join.setAttribute('aria-label',`${i+1}번 구절과 다음 구절 합치기`);
+      join.onclick=()=>{state.boundaries.delete(segment.end);state.overrides.clear();state.splitMode=false;state.selected=`${segment.start}-${segments[i+1].end}`;renderComposer();};node.append(join);
+    }
+  });
+  renderCandidates(); $('split-phrase').disabled=!selectedSegment()||selectedSegment().end-selectedSegment().start<2;
+  $('commit-text').disabled=!segments.length;
+  $('candidate-manual').disabled=!segments.length;
+  $('apply-manual').disabled=!segments.length;
+}
+function pushUnique(arr,text){if(text && !arr.includes(text) && arr.length<18)arr.push(text);}
+function candidatesFor(segment){
+  const source=state.units.slice(segment.start,segment.end),raw=segment.raw,hira=toHiragana(raw),out=[];
+  pushUnique(out,segment.text);
+  if(source.length===1){
+    for(const alt of (CONFUSABLES[raw]||[]))pushUnique(out,alt);
+  }
+  for(const value of (LEXICON[hira]||[]))pushUnique(out,value);
+  if(hira!==raw)pushUnique(out,hira);
+  pushUnique(out,raw);
+  const oneCands=source.map(u=>u.choices.slice(0,5));
+  for(let i=0;i<source.length;i++){
+    for(const ch of oneCands[i].slice(1)){
+      const alt=source.map((u,j)=>i===j?ch:u.base).join('');pushUnique(out,alt);
+      for(const transformed of LEXICON[toHiragana(alt)]||[])pushUnique(out,transformed);
+    }
+  }
+  if(source.length===1){const unit=source[0];for(const ch of unit.choices)pushUnique(out,ch);}
+  return out.slice(0,12);
+}
+function renderCandidates(){
+  const node=$('candidates');node.replaceChildren();const segment=selectedSegment();
+  if(!segment){node.append(makeEl('span','muted','필기를 인식하거나 예시를 불러오세요.'));$('candidate-manual').value='';return;}
+  $('candidate-manual').value=segment.text;
+  if(state.splitMode){
+    node.append(makeEl('span','muted','나눌 위치 선택: '));
+    for(let i=segment.start+1;i<segment.end;i++){
+      const preview=state.units.slice(segment.start,i).map(u=>u.base).join('')+' | '+state.units.slice(i,segment.end).map(u=>u.base).join('');
+      const btn=makeEl('button','candidate',preview);btn.style.fontSize='14px';
+      btn.onclick=()=>{state.boundaries.add(i);state.overrides.clear();state.splitMode=false;state.selected=`${segment.start}-${i}`;renderComposer();};node.append(btn);
+    }
+    return;
+  }
+  const suggestions=candidatesFor(segment);
+  if(!suggestions.length)node.append(makeEl('span','muted','추천 후보가 없습니다. 직접 수정해 주세요.'));
+  for(let i=0;i<suggestions.length;i++){
+    const cand=suggestions[i];const btn=makeEl('button','candidate'+(cand===segment.text?' current':''));
+    btn.type='button'; const rank=makeEl('span','rank',String(i+1));btn.append(rank,document.createTextNode(cand));
+    btn.title=`선택한 구절을 ${cand}(으)로 변환`;
+    btn.onclick=()=>{state.overrides.set(segment.key,cand);renderComposer();};node.append(btn);
+  }
+}
+$('split-phrase').onclick=()=>{state.splitMode=!state.splitMode;renderCandidates();};
+$('apply-manual').onclick=()=>{
+  const s=selectedSegment();if(!s)return;const text=$('candidate-manual').value;
+  if(!text.trim()){showToast('수정할 텍스트를 입력하세요.');return;}
+  state.overrides.set(s.key,text);state.splitMode=false;renderComposer();showToast('선택한 구절을 수정했어요.');
+};
+$('candidate-manual').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('apply-manual').click();}});
+$('commit-text').onclick=()=>{
+  const segments=getSegments();if(!segments.length){showToast('변환할 글자가 없어요.');return;}
+  const result=segments.map(s=>s.text).join('');const editor=$('text-editor');
+  const start=editor.selectionStart,end=editor.selectionEnd;
+  const appendSeparator=editor.value && start===editor.value.length && !editor.value.endsWith('\n')?'':'';
+  editor.setRangeText(appendSeparator+result,start,end,'end');
+  editor.dispatchEvent(new Event('input'));
+  setUnits([]); state.strokes=[];state.redo=[];redraw();
+  showToast(`「${result.slice(0,24)}${result.length>24?'…':''}」 텍스트에 추가했어요.`);
+};
+
+// Core inference uses the model's documented float32 1×1×128×128 input,
+// and softmax over all 3,082 outputs; the model performs glyph normalization.
+function drawCellToTensor(strokes){
+  const all=strokes.flatMap(s=>s.points);
+  const minX=Math.min(...all.map(p=>p.x)),maxX=Math.max(...all.map(p=>p.x));
+  const minY=Math.min(...all.map(p=>p.y)),maxY=Math.max(...all.map(p=>p.y));
+  const span=Math.max(15,maxX-minX,maxY-minY)*1.28;
+  const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
+  const el=document.createElement('canvas');el.width=el.height=128;const ctx=el.getContext('2d',{willReadFrequently:true});
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,128,128);
+  const toPt=p=>({x:64+(p.x-cx)*94/span,y:64+(p.y-cy)*94/span});
+  ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#111';ctx.fillStyle='#111';
+  ctx.lineWidth=Math.max(2.8,3.5*94/span);
+  for(const stroke of strokes){
+    const pts=stroke.points.map(toPt);
+    if(pts.length===1){ctx.beginPath();ctx.arc(pts[0].x,pts[0].y,ctx.lineWidth/2,0,Math.PI*2);ctx.fill();continue;}
+    ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i].x,pts[i].y);ctx.stroke();
+  }
+  const rgba=ctx.getImageData(0,0,128,128).data,arr=new Float32Array(128*128);
+  for(let i=0;i<arr.length;i++)arr[i]=rgba[4*i];
+  return arr;
+}
+function loadScript(src){return new Promise((resolve,reject)=>{
+  if(window.ort){resolve();return;}
+  const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=()=>reject(new Error('ONNX Runtime 스크립트를 불러올 수 없습니다.'));document.head.append(script);
+});}
+async function loadModel(){
+  if(state.session&&state.labels)return;
+  if(state.modelLoading)return state.modelLoading;
+  state.modelLoading=(async()=>{
+    setStatus('인식 엔진 다운로드 중 · 처음 실행 시 인터넷 연결이 필요해요.');
+    await loadScript(ORT_ROOT+'ort.min.js');
+    window.ort.env.wasm.wasmPaths=ORT_ROOT;
+    window.ort.env.wasm.numThreads=1;
+    const labelsRes=await fetch(MODEL_ROOT+'labels.json');
+    if(!labelsRes.ok)throw Error(`문자 라벨을 가져오지 못했습니다 (HTTP ${labelsRes.status})`);
+    const labels=await labelsRes.json();
+    if(!Array.isArray(labels)||labels.length<2500)throw Error('인식 모델의 글자 목록 형식이 예상과 다릅니다.');
+    const modelUrls=[MODEL_ROOT+'model.int8.onnx',MODEL_ROOT+'model.fp16.onnx'];
+    let lastError;
+    for(const url of modelUrls){
+      try{state.session=await window.ort.InferenceSession.create(url,{executionProviders:['wasm']});break;}
+      catch(err){lastError=err;}
+    }
+    if(!state.session)throw Error(`모델 다운로드/초기화 실패: ${String(lastError?.message||lastError)}`);
+    state.labels=labels;setStatus('일본어 손글씨 인식 엔진이 준비되었습니다.','ready');
+  })();
+  try{await state.modelLoading;}catch(e){state.modelLoading=null;throw e;}
+}
+function rankLogits(logits,count=5){
+  const result=[];
+  let max=-Infinity;
+  for(let i=0;i<logits.length;i++)max=Math.max(max,Number(logits[i]));
+  let sum=0;for(let i=0;i<logits.length;i++)sum+=Math.exp(Number(logits[i])-max);
+  for(let i=0;i<logits.length;i++){
+    const score=Number(logits[i]);
+    if(result.length<count||score>result.at(-1).score){
+      result.push({index:i,score,prob:Math.exp(score-max)/sum});
+      result.sort((a,b)=>b.score-a.score);if(result.length>count)result.pop();
+    }
+  }
+  return result;
+}
+async function recognize(){
+  if(state.recognitionRunning)return;
+  if(!state.strokes.length){showToast('먼저 캔버스에 일본어를 써 주세요.');return;}
+  const byCell=new Map();
+  for(const s of state.strokes){if(!byCell.has(s.cell))byCell.set(s.cell,[]);byCell.get(s.cell).push(s);}
+  const cells=[...byCell.keys()].sort((a,b)=>a-b);
+  state.recognitionRunning=true;$('recognize').disabled=true;
+  $('recognize-label').replaceChildren(makeEl('span','spinner'),document.createTextNode(' 인식 준비 중'));
+  try{
+    await loadModel();const units=[];
+    const heights=cells.map(cell=>{const pts=byCell.get(cell).flatMap(s=>s.points);return Math.max(...pts.map(p=>p.y))-Math.min(...pts.map(p=>p.y));});
+    const sortedHeights=[...heights].sort((a,b)=>a-b),medianHeight=sortedHeights[Math.floor(sortedHeights.length/2)]||0;
+    for(let i=0;i<cells.length;i++){
+      $('recognize-label').textContent=`인식 중 ${i+1}/${cells.length}`;
+      const strokes=byCell.get(cells[i]);
+      const tensor=new window.ort.Tensor('float32',drawCellToTensor(strokes),[1,1,128,128]);
+      const outputs=await state.session.run({input:tensor});
+      const logits=outputs.logits?.data||Object.values(outputs)[0].data;
+      const ranked=rankLogits(logits,6).map(r=>({char:state.labels[r.index]?.char||'',prob:r.prob})).filter(r=>r.char);
+      if(!ranked.length)throw Error('인식 모델에서 후보를 받지 못했어요.');
+      let chosen=ranked[0].char;
+      // Small kana cannot be distinguished by the classifier alone; try pen-size cues.
+      // The original full-size kana always remains available as a correction candidate.
+      if(SMALL_KANA[chosen] && cells.length>1 && medianHeight>20 && heights[i]<medianHeight*.66 && heights[i]<60){
+        chosen=SMALL_KANA[chosen];
+      }
+      units.push(createUnit(chosen,ranked,ranked[0].prob));
+      await new Promise(resolve=>setTimeout(resolve,0));
+    }
+    setUnits(units);
+    setStatus(`${units.length}글자 인식 완료 · 오인식은 후보나 직접 수정으로 바로잡아 주세요.`, 'ready');
+    document.getElementById('compose-title').scrollIntoView({behavior:'smooth',block:'center'});
+    const uncertain=units.filter(u=>u.confidence!==null&&u.confidence<.65).length;
+    showToast(`${units.length}글자를 분석했어요.${uncertain?` 신뢰도가 낮은 글자 ${uncertain}개는 확인해 주세요.`:''}`);
+  }catch(e){
+    setStatus('모델을 불러오지 못했습니다. 예시 및 직접 입력 모드는 사용 가능해요.','error');
+    console.error('KAKU recognition failure:',e);
+    showToast('온라인 인식 연결 실패 · 직접 입력을 눌러 구절 변환을 시험할 수 있어요.');
+    $('manual-dialog').classList.remove('hide');
+  }finally{
+    state.recognitionRunning=false;$('recognize').disabled=false;$('recognize-label').textContent='✧   필기 인식하기';
+  }
+}
+$('recognize').addEventListener('click',recognize);
+
+// Manual/sample inputs are explicitly marked as such and never misrepresented as OCR.
+function importManualText(text){
+  const cleaned=[...text].filter(c=>c!=='\n'&&c!=='\r'&&c!==' ');
+  if(!cleaned.length){showToast('일본어를 먼저 입력해 주세요.');return;}
+  if(cleaned.length>60){showToast('구절 입력은 60자 이하로 입력해 주세요.');return;}
+  setUnits(cleaned.map(c=>createUnit(c)));
+  setStatus('수동 입력 모드 · 이 결과는 AI 필기 인식이 아닙니다.');
+  $('manual-dialog').classList.add('hide');showToast('수동 텍스트를 구절로 나누었어요.');
+  $('compose-title').scrollIntoView({behavior:'smooth',block:'center'});
+}
+$('manual-mode').onclick=()=>{$('manual-dialog').classList.remove('hide');$('manual-compose').focus();};
+$('cancel-dialog').onclick=()=>$('manual-dialog').classList.add('hide');
+$('confirm-dialog').onclick=()=>importManualText($('manual-compose').value);
+$('manual-dialog').addEventListener('click',e=>{if(e.target===$('manual-dialog'))$('manual-dialog').classList.add('hide');});
+function loadDemo(text,boundaries){
+  const chars=[...text];setUnits(chars.map(c=>createUnit(c)),boundaries);
+  setStatus('예시 데이터 · 인식 모델을 실행한 결과가 아닙니다.');
+  $('compose-title').scrollIntoView({behavior:'smooth',block:'center'});
+  showToast('예시를 불러왔어요. 후보를 선택해 보세요.');
+}
+$('demo-weather').onclick=()=>loadDemo('きょうはいいてんき',[4,6]);
+$('demo-confusable').onclick=()=>loadDemo('カ',[/* no boundaries */]);
+
+// Document and notes are stored locally, not uploaded.
+const editor=$('text-editor');editor.value=safeGet(STORAGE_EDITOR,'');
+function updateEditor(){
+  $('char-count').textContent=`${[...editor.value].length} chars`;
+  safeSet(STORAGE_EDITOR,editor.value);
+}
+editor.addEventListener('input',updateEditor);updateEditor();
+$('copy-text').onclick=async()=>{
+  if(!editor.value){showToast('복사할 텍스트가 없어요.');return;}
+  try{await navigator.clipboard.writeText(editor.value);showToast('클립보드에 복사했어요.');}
+  catch{editor.focus();editor.select();showToast('복사 권한이 제한되어 있어요. 텍스트를 선택했으니 직접 복사해 주세요.');}
+};
+$('export-txt').onclick=()=>{
+  if(!editor.value){showToast('내보낼 텍스트가 없어요.');return;}
+  const blob=new Blob(['\ufeff'+editor.value],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='KAKU_'+new Date().toISOString().slice(0,10)+'.txt';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+  showToast('일본어 텍스트 파일을 저장했어요.');
+};
+function loadArchive(){const notes=safeGet(STORAGE_ARCHIVE,[]);return Array.isArray(notes)?notes:[];}
+function renderArchive(){
+  const list=$('archive-list');list.replaceChildren();const notes=loadArchive();
+  if(!notes.length){list.append(makeEl('div','archive-empty','아직 저장한 기록이 없습니다. 문서 아래 ‘기록 저장’을 눌러 보세요.'));return;}
+  for(const note of notes.slice(0,8)){
+    const box=makeEl('div','archive-entry'),date=makeEl('div','date',new Date(note.created).toLocaleString('ko-KR'));
+    const sample=makeEl('div','sample',note.text||'(빈 기록)'),actions=makeEl('div','actions');
+    const load=makeEl('button','button small','불러오기'),del=makeEl('button','button small','삭제');
+    load.onclick=()=>{if(editor.value&&editor.value!==note.text&&!confirm('현재 문서 내용을 이 기록으로 교체할까요?'))return;editor.value=note.text;updateEditor();showToast('기록을 불러왔어요.');editor.scrollIntoView({behavior:'smooth',block:'center'});};
+    del.onclick=()=>{safeSet(STORAGE_ARCHIVE,loadArchive().filter(n=>n.id!==note.id));renderArchive();showToast('저장 기록을 삭제했어요.');};
+    actions.append(load,del);box.append(date,sample,actions);list.append(box);
+  }
+}
+$('save-note').onclick=()=>{
+  if(!editor.value.trim()){showToast('먼저 일본어 텍스트를 작성해 주세요.');return;}
+  const notes=loadArchive();notes.unshift({id:Date.now()+'-'+Math.random().toString(36).slice(2,7),created:Date.now(),text:editor.value});
+  safeSet(STORAGE_ARCHIVE,notes.slice(0,35));renderArchive();showToast('현재 문서를 기록에 저장했어요.');
+};
+$('refresh-archive').onclick=renderArchive;
+function scrollToBlock(id,nav){$(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.id===nav));}
+$('nav-write').onclick=()=>{window.scrollTo({top:0,behavior:'smooth'});document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.id==='nav-write'));};
+$('nav-archive').onclick=()=>scrollToBlock('archive-panel','nav-archive');
+$('nav-guide').onclick=()=>scrollToBlock('guide-panel','nav-guide');
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')$('manual-dialog').classList.add('hide');
+  const target=e.target;
+  const inInput=target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+  if(!inInput&&(e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){
+    e.preventDefault();(e.shiftKey?$('redo'):$('undo')).click();
+  }
+});
+initCanvas();renderComposer();renderArchive();
+
+</script>
+</body>
+</html>
