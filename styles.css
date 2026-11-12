@@ -289,12 +289,13 @@ button:disabled {opacity:.44}
 }
 @media (max-width:420px) {
   .hero h1 {font-size:26px}
-  .canvas-actions {gap:9px}
-  .canvas-scroll-controls {width:100%;justify-content:space-between}
-  .canvas-scroll-controls .button {flex:1}
-  .canvas-actions > #manual-mode {flex:1}
-  .canvas-actions > #recognize {flex:2}
-  .grid-progress {flex:1;min-width:72px}
+  /* Two explicit rows prevent the recognition button from covering grid controls. */
+  .canvas-actions {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:9px;align-items:stretch}
+  .canvas-scroll-controls {grid-column:1/-1;display:flex;width:100%;min-width:0;justify-content:space-between;flex:none}
+  .canvas-scroll-controls .button {flex:0 0 auto;min-width:0}
+  .canvas-actions > #manual-mode {grid-column:1;min-width:0;width:100%;flex:none}
+  .canvas-actions > #recognize {grid-column:2;min-width:0;width:100%;flex:none}
+  .grid-progress {flex:1;min-width:60px}
   .tool-divider {margin:0}
   .penonly {width:100%}
   .candidate-heading {align-items:flex-start}
