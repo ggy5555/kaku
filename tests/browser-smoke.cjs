@@ -187,7 +187,9 @@ async function main(){
 
     // Controlled ONNX network failure falls back to manual dialog.
     await page.setViewportSize({width:1440,height:900});
-    // Width changes retain horizontal scroll state: reset before a pointer test.
+    // Make the model-error case independent of previous mobile scrolling.
+    await page.reload({waitUntil:'domcontentloaded'});
+    await page.locator('#canvas-window').scrollIntoViewIfNeeded();
     await page.locator('#canvas-window').evaluate(el=>{el.scrollLeft=0;});
     await page.route('**/onnxruntime-web@1.20.1/dist/ort.min.js',r=>r.abort());
     await drawWithMouse(page);
