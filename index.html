@@ -37,6 +37,7 @@
     @media(max-width:730px){.layout{display:block}.sidebar{height:70px;padding:0 18px;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--border)}.sidebar .navgroup,.sidebar .note-card,.sidebar .tinyline{display:none}.main{padding:19px 14px 30px}.topbar{margin-bottom:21px}.hero{margin-bottom:20px}.hero h1{font-size:31px}.hero p{font-size:12px}.side-content{display:grid;grid-template-columns:1fr;gap:18px}.workspace,.stack{gap:15px}.panel-hd{padding:18px 16px 13px}.canvas-wrap{padding:0 12px}.tools{padding:0 10px 10px}.canvas-footer{padding:9px 12px 13px}.canvas-tip{display:none}.composer-body,.editor-body{padding:0 14px 17px}.candidate{font-size:16px}.topright .badge{display:none}.breadcrumb-slash{display:none}.avatar{display:none}.composer-bottom{align-items:stretch}.composer-buttons{width:100%}.composer-buttons .button{flex:1}.hero .eyebrow{margin-bottom:9px}}
     @media(prefers-reduced-motion:reduce){.spinner{animation:none}}
   </style>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
 <div class="layout">
@@ -44,22 +45,22 @@
     <div class="logo"><div class="logo-mark">書</div><div class="logo-copy"><strong>KAKU</strong><small>日本語 handwriting studio</small></div></div>
     <div class="navgroup"><div class="nav-heading">Workspace</div><nav class="nav-list" aria-label="워크스페이스"><button type="button" class="nav-item active" id="nav-write"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19l7-7 3 3-7 7H12v-3zM4 4h9m-9 5h6m-6 5h6M3 20h5"/></svg> 필기 워크스페이스</button><button type="button" class="nav-item" id="nav-archive"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18m-12 5h6"/></svg> 저장 기록</button><button type="button" class="nav-item" id="nav-guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V6a2 2 0 012-2h13v15H6a2 2 0 000 4h13"/><path d="M7 9h8M7 13h6"/></svg> 사용 방법</button></nav></div>
     <div class="note-card"><div class="jp">一文字ずつ、<br/>一緒に。</div><p>한 글자씩 쓰되,<br/>변환은 문맥에 맞게.<br/>손글씨와 텍스트 사이의 작업실.</p></div><div class="tinyline">KAKU LAB · Prototype 01</div>
+    <div class="header-status"><span class="badge" id="model-badge">● LOCAL-FIRST</span></div>
   </aside>
   <main class="main">
-    <div class="topbar"><div class="breadcrumbs">Studio <span class="breadcrumb-slash">/</span> <strong>Handwriting</strong></div><div class="topright"><span class="badge" id="model-badge">● LOCAL-FIRST</span><span class="avatar">か</span></div></div>
-    <section class="hero"><div><div class="eyebrow">日本語入力 ・ Japanese input</div><h1>생각의 흐름대로, <em>書く。</em></h1><p>손으로 쓰고, 구절로 고르고, 텍스트로 남기는 일본어 필기 도구.</p></div><div class="hero-kanji">書</div></section>
+    <section class="hero"><div><div class="eyebrow">JAPANESE HANDWRITING STUDIO · 書く。</div><h1>한 글자씩 쓰고, <em>문장으로 완성하세요.</em></h1><p>펜으로 쓰고, 후보를 고르고, 일본어 문장으로 남겨 보세요.</p></div><div class="hero-kanji">書</div></section>
     <div id="write-view" class="workspace">
       <div class="stack">
         <section class="panel" aria-labelledby="ink-title"><div class="panel-hd"><div><span class="kicker">01 / INK</span><h2 id="ink-title">손글씨 입력</h2><p class="subcopy">안내 칸마다 글자 하나씩 쓰세요. 변환 후보는 구절 단위로 나타납니다.</p></div><span class="step" id="stroke-count">0 strokes</span></div>
-          <div class="tools"><button class="icon-btn selected" id="tool-pen" title="펜" aria-label="펜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20l5-1 11-11-4-4L5 15l-1 5zm10-14l4 4"/></svg> 펜</button><button class="icon-btn" id="tool-erase" title="지우개" aria-label="지우개"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 13l-7 7H6l-4-4 12-12 6 6-6 6M10 20h11"/></svg> 지우개</button><span class="tool-divider"></span><button class="icon-btn" id="undo" title="마지막 획 되돌리기" aria-label="되돌리기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-2"/></svg></button><button class="icon-btn" id="redo" title="다시 실행" aria-label="다시 실행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 14l5-5-5-5m5 5H9a5 5 0 000 10h2"/></svg></button><button class="icon-btn" id="clear-ink" title="필기 모두 지우기" aria-label="필기 모두 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16m-14 0l1 14h10l1-14M9 7V4h6v3m-5 4v7m4-7v7"/></svg></button><span class="flexgap"></span><label class="penonly"><input type="checkbox" id="pen-only"/> S펜만 입력</label></div>
+          <div class="tools"><button class="icon-btn selected" id="tool-pen" aria-pressed="true" title="펜" aria-label="펜"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20l5-1 11-11-4-4L5 15l-1 5zm10-14l4 4"/></svg> 펜</button><button class="icon-btn" id="tool-erase" aria-pressed="false" title="지우개" aria-label="지우개"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 13l-7 7H6l-4-4 12-12 6 6-6 6M10 20h11"/></svg> 지우개</button><span class="tool-divider"></span><button class="icon-btn" id="undo" title="마지막 획 되돌리기" aria-label="되돌리기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 14L4 9l5-5M4 9h11a5 5 0 010 10h-2"/></svg><span class="tool-label">되돌리기</span></button><button class="icon-btn" id="redo" title="다시 실행" aria-label="다시 실행"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 14l5-5-5-5m5 5H9a5 5 0 000 10h2"/></svg><span class="tool-label">다시 실행</span></button><button class="icon-btn" id="clear-ink" title="필기 모두 지우기" aria-label="필기 모두 지우기"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7h16m-14 0l1 14h10l1-14M9 7V4h6v3m-5 4v7m4-7v7"/></svg><span class="tool-label">전체 지우기</span></button><span class="flexgap"></span><label class="penonly"><input type="checkbox" id="pen-only"/> S펜만 입력</label></div>
           <div class="canvas-wrap"><div class="canvas-window" id="canvas-window"><div class="canvas-header"><span>HANDWRITING GRID · 14 CHARACTERS</span><span>左 → 右</span></div><div class="canvas-inner"><canvas id="ink-canvas" width="1120" height="183" aria-label="일본어 손글씨 입력 영역"></canvas><div class="empty-hint" id="empty-hint"><span class="glyph">あ</span><p>펜으로 한 글자씩 적어 보세요<br/>예: きょうはいいてんき</p></div></div></div></div>
-          <div class="canvas-footer"><div class="canvas-tip">✦ <span>S펜은 화면에 닿을 때만 필기 · 호버 입력 제외</span></div><div class="canvas-actions"><button type="button" class="button" id="scroll-grid" title="오른쪽 칸 보기">다음 칸 →</button><button type="button" class="button" id="manual-mode">직접 입력</button><button type="button" class="button primary" id="recognize"><span id="recognize-label">✧ &nbsp; 필기 인식하기</span></button></div></div><div class="statusline" role="status" aria-live="polite"><span id="status-dot" class="statusdot"></span><span id="status-text">필기 입력 준비 완료 · 인식 모델은 첫 실행 시 온라인에서 불러옵니다.</span></div>
+          <div class="canvas-footer"><div class="canvas-tip">✦ <span>S펜은 화면에 닿을 때만 필기 · 호버 입력 제외</span></div><div class="canvas-actions"><div class="canvas-scroll-controls" aria-label="필기 칸 탐색"><button type="button" class="button" id="scroll-grid-prev" title="이전 필기 칸 보기" aria-label="이전 칸">← 이전</button><span class="grid-progress" id="grid-progress" aria-live="polite">01–14 / 14</span><button type="button" class="button" id="scroll-grid" title="오른쪽 필기 칸 보기" aria-label="다음 칸">다음 →</button></div><button type="button" class="button" id="manual-mode">직접 입력</button><button type="button" class="button primary" id="recognize"><span id="recognize-label">✧ &nbsp; 필기 인식하기</span></button></div></div><div class="statusline" role="status" aria-live="polite"><span id="status-dot" class="statusdot"></span><span id="status-text">필기 입력 준비 완료 · 인식 모델은 첫 실행 시 온라인에서 불러옵니다.</span></div>
         </section>
-        <section class="panel" aria-labelledby="compose-title"><div class="panel-hd"><div><span class="kicker">02 / COMPOSE</span><h2 id="compose-title">구절 변환</h2><p class="subcopy">구절을 선택하고 아래 후보 중 하나를 고르세요.</p></div><span class="step">IME-STYLE</span></div><div class="composer-body"><div class="composition-bar" id="composition" aria-label="변환 중인 일본어 문자열"><span class="composition-empty">인식 결과가 여기에 표시됩니다.</span></div><div class="sublabel">変換候補 / 선택한 구절의 변환 후보</div><div class="candidate-list" id="candidates"><span class="muted">필기를 인식하거나 예시를 불러오세요.</span></div><div class="candidate-edit"><input id="candidate-manual" type="text" lang="ja" placeholder="후보가 없으면 직접 수정" aria-label="선택한 구절 직접 수정"/><button type="button" class="button" id="apply-manual">수정 적용</button></div><div class="composer-bottom"><span class="secondaryhelp">구절 사이의 작은 경계를 눌러 합칠 수 있고, 구절 선택 후 '구절 나누기'로 분할할 수 있습니다.</span><div class="composer-buttons"><button class="button" id="split-phrase">구절 나누기</button><button class="button accent" id="commit-text">텍스트에 추가 ↗</button></div></div></div></section>
-        <section class="panel" aria-labelledby="editor-title"><div class="panel-hd"><div><span class="kicker">03 / DOCUMENT</span><h2 id="editor-title">나의 텍스트</h2><p class="subcopy">확정된 일본어 문장을 저장하고 복사하세요. 브라우저에 자동 저장됩니다.</p></div><span class="step" id="char-count">0 chars</span></div><div class="editor-body"><textarea id="text-editor" lang="ja" spellcheck="false" placeholder="ここに日本語が入ります。"></textarea><div class="editor-actions"><span class="muted">LOCAL AUTOSAVE · 이 브라우저에 저장</span><div class="editor-buttons"><button type="button" class="button small" id="save-note">기록 저장</button><button type="button" class="button small" id="export-txt">.txt 내보내기</button><button type="button" class="button small primary" id="copy-text">복사</button></div></div></div></section>
+        <section class="panel" aria-labelledby="compose-title"><div class="panel-hd"><div><span class="kicker">02 / COMPOSE</span><h2 id="compose-title">구절 변환</h2><p class="subcopy">구절을 선택하고 아래 후보 중 하나를 고르세요.</p></div><span class="step">IME-STYLE</span></div><div class="composer-body"><div class="composition-bar" id="composition" aria-label="변환 중인 일본어 문자열"><span class="composition-empty">인식 결과가 여기에 표시됩니다.</span></div><div class="candidate-heading"><div class="sublabel">変換候補 / 선택한 구절의 변환 후보</div><span class="selected-phrase-status" id="selected-phrase-status">구절을 선택하면 후보가 표시됩니다.</span></div><div class="candidate-list" id="candidates"><span class="muted">필기를 인식하거나 예시를 불러오세요.</span></div><div class="candidate-edit"><input id="candidate-manual" type="text" lang="ja" placeholder="후보가 없으면 직접 수정" aria-label="선택한 구절 직접 수정"/><button type="button" class="button" id="apply-manual">수정 적용</button></div><div class="composer-bottom"><span class="secondaryhelp">구절 사이의 작은 경계를 눌러 합칠 수 있고, 구절 선택 후 '구절 나누기'로 분할할 수 있습니다.</span><div class="composer-buttons"><button class="button" id="split-phrase">구절 나누기</button><button class="button accent" id="commit-text">텍스트에 추가 ↗</button></div></div></div></section>
+        <section class="panel" aria-labelledby="editor-title"><div class="panel-hd"><div><span class="kicker">03 / DOCUMENT</span><h2 id="editor-title">나의 텍스트</h2><p class="subcopy">확정된 일본어 문장을 저장하고 복사하세요. 브라우저에 자동 저장됩니다.</p></div><span class="step" id="char-count">0 chars</span></div><div class="editor-body"><textarea id="text-editor" lang="ja" spellcheck="false" placeholder="ここに日本語が入ります。"></textarea><div class="editor-actions"><span class="autosave-status" id="autosave-status" role="status" aria-live="polite">초안 저장 상태 확인 중</span><div class="editor-buttons"><button type="button" class="button small" id="save-note">기록 저장</button><button type="button" class="button small" id="export-txt">.txt 내보내기</button><button type="button" class="button small primary" id="copy-text">복사</button></div></div></div></section>
       </div>
       <div class="stack side-content">
-        <section class="panel sidepanel" id="guide-panel"><div class="panel-hd"><div><span class="kicker">QUICK START</span><h2>이렇게 사용해요</h2></div><span class="step">3 STEPS</span></div><div class="inner"><ol><li><span class="num">01</span><div class="steptext"><strong>한 칸에 한 글자</strong><span>S펜 또는 마우스로 왼쪽부터 필기하세요. 칸을 넘는 긴 획도 시작한 칸에 속합니다.</span></div></li><li><span class="num">02</span><div class="steptext"><strong>문자 인식</strong><span>인식 버튼을 누르면 브라우저에서 모델이 각 글자를 분석합니다.</span></div></li><li><span class="num">03</span><div class="steptext"><strong>구절 후보 선택</strong><span>한자와 가나가 헷갈리면 후보를 눌러 수정한 뒤 문서에 추가하세요.</span></div></li></ol><div class="line"></div><div class="sublabel">인터랙티브 예시</div><div class="demo-grid"><button type="button" class="demo-card" id="demo-weather"><div class="jp">今日は天気</div><small>문장 · 구절 변환</small></button><button type="button" class="demo-card" id="demo-confusable"><div class="jp">カ / 力</div><small>유사 글자 · 후보 선택</small></button></div></div></section>
+        <section class="panel sidepanel" id="guide-panel"><div class="panel-hd"><div><span class="kicker">QUICK START</span><h2>이렇게 사용해요</h2></div><span class="step">4 STEPS</span></div><div class="inner"><ol><li><span class="num">01</span><div class="steptext"><strong>한 칸에 한 글자</strong><span>S펜 또는 마우스로 왼쪽부터 필기하세요. 칸을 넘는 긴 획도 시작한 칸에 속합니다.</span></div></li><li><span class="num">02</span><div class="steptext"><strong>문자 인식</strong><span>인식 버튼을 누르면 브라우저에서 모델이 각 글자를 분석합니다.</span></div></li><li><span class="num">03</span><div class="steptext"><strong>구절 후보 선택</strong><span>한자와 가나가 헷갈리면 후보를 눌러 수정한 뒤 문서에 추가하세요.</span></div></li><li><span class="num">04</span><div class="steptext"><strong>텍스트에 추가</strong><span>선택한 후보를 확정한 뒤 문서에 추가하고, 복사하거나 저장하세요.</span></div></li></ol><div class="line"></div><div class="sublabel">인터랙티브 예시</div><div class="demo-grid"><button type="button" class="demo-card" id="demo-weather"><div class="jp">今日は天気</div><small>문장 · 구절 변환</small></button><button type="button" class="demo-card" id="demo-confusable"><div class="jp">カ / 力</div><small>유사 글자 · 후보 선택</small></button></div></div></section>
         <section class="panel sidepanel"><div class="panel-hd"><div><span class="kicker">ENGINE NOTES</span><h2>인식 엔진</h2></div></div><div class="inner"><div class="model-info"><strong>ONNX Runtime Web</strong>과 공개 일본어 손글씨 단일 문자 모델을 사용합니다. 인식 연산은 기기에서 처리하지만, 첫 실행 때 모델 파일을 내려받으므로 인터넷 연결이 필요합니다.<div class="line"></div><strong>현재 제한</strong><br/>한 칸에 한 글자씩 입력해야 하며, 작은 가나·구두점·숫자·일부 한자와 긴 문장 자동 구문 분석은 미지원 또는 정확도가 제한됩니다. 후보 사전은 초기 데모 규모입니다.<div class="line"></div><a href="https://huggingface.co/LT8/japanese-handwriting-onnx" target="_blank" rel="noopener noreferrer">모델 정보 ↗</a></div></div></section>
         <section class="panel sidepanel" id="archive-panel"><div class="panel-hd"><div><span class="kicker">MY NOTES</span><h2>최근 저장 기록</h2></div><button type="button" class="button small" id="refresh-archive">새로고침</button></div><div class="inner"><div class="archive-list" id="archive-list"><div class="archive-empty">아직 저장한 기록이 없습니다.</div></div></div></section>
       </div>
@@ -140,7 +141,7 @@ function setStatus(message, kind='neutral'){
   $('model-badge').textContent=kind==='ready'?'● ENGINE READY':kind==='error'?'● MANUAL AVAILABLE':'● LOCAL-FIRST';
 }
 function safeGet(key, fallback){try { const val=localStorage.getItem(key);return val===null?fallback:JSON.parse(val); }catch{return fallback;}}
-function safeSet(key, value){try{localStorage.setItem(key,JSON.stringify(value));}catch{showToast('이 브라우저는 로컬 저장 기능을 사용할 수 없습니다.');}}
+function safeSet(key, value){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{showToast('이 브라우저는 로컬 저장 기능을 사용할 수 없습니다.');return false;}}
 function svgIcon(label){return label;}
 function makeEl(tag, className, text){const e=document.createElement(tag);if(className)e.className=className;if(text!==undefined)e.textContent=text;return e;}
 
@@ -232,12 +233,28 @@ window.addEventListener('blur',()=>{if(state.activePointer!==null)finishPointer(
 document.addEventListener('visibilitychange',()=>{if(document.hidden && state.activePointer!==null)finishPointer(state.activePointer);});
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 $('tool-pen').onclick=()=>setTool('pen');$('tool-erase').onclick=()=>setTool('erase');
-function setTool(tool){state.tool=tool;$('tool-pen').classList.toggle('selected',tool==='pen');$('tool-erase').classList.toggle('selected',tool==='erase');}
+function setTool(tool){state.tool=tool;$('tool-pen').classList.toggle('selected',tool==='pen');$('tool-erase').classList.toggle('selected',tool==='erase');$('tool-pen').setAttribute('aria-pressed',String(tool==='pen'));$('tool-erase').setAttribute('aria-pressed',String(tool==='erase'));}
 $('undo').onclick=()=>{if(state.strokes.length){state.redo.push(state.strokes.pop());redraw();}};
 $('redo').onclick=()=>{if(state.redo.length){state.strokes.push(state.redo.pop());redraw();}};
 $('clear-ink').onclick=()=>{if(state.strokes.length){state.strokes=[];state.redo=[];redraw();showToast('필기 획을 지웠어요. 인식 결과는 유지됩니다.');}};
-$('scroll-grid').onclick=()=>{const box=$('canvas-window');if(box.scrollLeft+box.clientWidth>=box.scrollWidth-25)box.scrollTo({left:0,behavior:'smooth'});else box.scrollBy({left:box.clientWidth*.7,behavior:'smooth'});};
-window.addEventListener('resize',initCanvas);
+function updateGridProgress(){
+  const box=$('canvas-window');
+  const first=Math.min(CELL_COUNT,Math.max(1,Math.floor(box.scrollLeft/CELL_W)+1));
+  const last=Math.min(CELL_COUNT,Math.max(first,Math.ceil((box.scrollLeft+box.clientWidth)/CELL_W)));
+  $('grid-progress').textContent=String(first).padStart(2,'0')+'–'+String(last).padStart(2,'0')+' / '+CELL_COUNT;
+  $('scroll-grid-prev').disabled=box.scrollLeft<=1;
+  $('scroll-grid').disabled=box.scrollLeft+box.clientWidth>=box.scrollWidth-1;
+}
+$('scroll-grid').onclick=()=>{
+  const box=$('canvas-window');
+  box.scrollBy({left:Math.max(CELL_W,Math.floor(box.clientWidth/CELL_W)*CELL_W),behavior:'smooth'});
+};
+$('scroll-grid-prev').onclick=()=>{
+  const box=$('canvas-window');
+  box.scrollBy({left:-Math.max(CELL_W,Math.floor(box.clientWidth/CELL_W)*CELL_W),behavior:'smooth'});
+};
+$('canvas-window').addEventListener('scroll',updateGridProgress,{passive:true});
+window.addEventListener('resize',()=>{initCanvas();updateGridProgress();});
 
 function toHiragana(s){return [...s].map(c=>{const code=c.codePointAt(0);return code>=0x30a1&&code<=0x30f6?String.fromCodePoint(code-0x60):c;}).join('');}
 function variantsForChar(base, predictions=[]){
@@ -284,10 +301,12 @@ function selectedSegment(){const segments=getSegments();return segments.find(s=>
 function resetSelection(start){state.selected=getSegments().find(s=>s.start===start)?.key||getSegments()[0]?.key||null;}
 function renderComposer(){
   const node=$('composition');node.replaceChildren();const segments=getSegments();
+  const active=selectedSegment();
+  $('selected-phrase-status').textContent=active?'「'+active.text+'」 후보 적용 중 · 문서 확정 전':'구절을 선택하면 후보가 표시됩니다.';
   if(!segments.length){node.append(makeEl('span','composition-empty','인식 결과가 여기에 표시됩니다.'));}
   segments.forEach((segment,i)=>{
     const btn=makeEl('button','phrase'+(segment.key===state.selected?' selected':''),segment.text);
-    btn.type='button';btn.title=`${segment.start+1}~${segment.end}번째 글자 구절 선택`;
+    btn.type='button';btn.lang='ja';btn.title=`${segment.start+1}~${segment.end}번째 글자 구절 선택`;
     btn.setAttribute('aria-pressed',segment.key===state.selected?'true':'false');
     btn.addEventListener('click',()=>{state.selected=segment.key;state.splitMode=false;renderComposer();});node.append(btn);
     if(i<segments.length-1){
@@ -338,7 +357,7 @@ function renderCandidates(){
   if(!suggestions.length)node.append(makeEl('span','muted','추천 후보가 없습니다. 직접 수정해 주세요.'));
   for(let i=0;i<suggestions.length;i++){
     const cand=suggestions[i];const btn=makeEl('button','candidate'+(cand===segment.text?' current':''));
-    btn.type='button'; const rank=makeEl('span','rank',String(i+1));btn.append(rank,document.createTextNode(cand));
+    btn.type='button';btn.lang='ja';btn.setAttribute('aria-pressed',String(cand===segment.text)); const rank=makeEl('span','rank',String(i+1));btn.append(rank,document.createTextNode(cand));
     btn.title=`선택한 구절을 ${cand}(으)로 변환`;
     btn.onclick=()=>{state.overrides.set(segment.key,cand);renderComposer();};node.append(btn);
   }
@@ -496,7 +515,10 @@ $('demo-confusable').onclick=()=>loadDemo('カ',[/* no boundaries */]);
 const editor=$('text-editor');editor.value=safeGet(STORAGE_EDITOR,'');
 function updateEditor(){
   $('char-count').textContent=`${[...editor.value].length} chars`;
-  safeSet(STORAGE_EDITOR,editor.value);
+  const saved=safeSet(STORAGE_EDITOR,editor.value);
+  const indicator=$('autosave-status');
+  indicator.textContent=saved?'초안 자동 저장됨 · 이 브라우저':'자동 저장 불가 · TXT 내보내기를 이용하세요.';
+  indicator.className='autosave-status '+(saved?'saved':'error');
 }
 editor.addEventListener('input',updateEditor);updateEditor();
 $('copy-text').onclick=async()=>{
@@ -520,14 +542,14 @@ function renderArchive(){
     const sample=makeEl('div','sample',note.text||'(빈 기록)'),actions=makeEl('div','actions');
     const load=makeEl('button','button small','불러오기'),del=makeEl('button','button small','삭제');
     load.onclick=()=>{if(editor.value&&editor.value!==note.text&&!confirm('현재 문서 내용을 이 기록으로 교체할까요?'))return;editor.value=note.text;updateEditor();showToast('기록을 불러왔어요.');editor.scrollIntoView({behavior:'smooth',block:'center'});};
-    del.onclick=()=>{safeSet(STORAGE_ARCHIVE,loadArchive().filter(n=>n.id!==note.id));renderArchive();showToast('저장 기록을 삭제했어요.');};
+    del.onclick=()=>{if(!safeSet(STORAGE_ARCHIVE,loadArchive().filter(n=>n.id!==note.id)))return;renderArchive();showToast('저장 기록을 삭제했어요.');};
     actions.append(load,del);box.append(date,sample,actions);list.append(box);
   }
 }
 $('save-note').onclick=()=>{
   if(!editor.value.trim()){showToast('먼저 일본어 텍스트를 작성해 주세요.');return;}
   const notes=loadArchive();notes.unshift({id:Date.now()+'-'+Math.random().toString(36).slice(2,7),created:Date.now(),text:editor.value});
-  safeSet(STORAGE_ARCHIVE,notes.slice(0,35));renderArchive();showToast('현재 문서를 기록에 저장했어요.');
+  if(!safeSet(STORAGE_ARCHIVE,notes.slice(0,35)))return;renderArchive();showToast('현재 문서를 기록에 저장했어요.');
 };
 $('refresh-archive').onclick=renderArchive;
 function scrollToBlock(id,nav){$(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.id===nav));}
@@ -542,7 +564,7 @@ document.addEventListener('keydown',e=>{
     e.preventDefault();(e.shiftKey?$('redo'):$('undo')).click();
   }
 });
-initCanvas();renderComposer();renderArchive();
+initCanvas();updateGridProgress();renderComposer();renderArchive();
 
 </script>
 </body>
