@@ -208,7 +208,7 @@ async function main(){
     mocked.setDefaultTimeout(12000);
     mocked.on('pageerror',e=>errors.push('mock:'+e.message));
     await mocked.addInitScript(()=>{
-      window.ort={env:{wasm:{}},InferenceSession:{create:async()=>({
+      window.ort={env:{wasm:{}},Tensor:class MockTensor{constructor(type,data,dims){this.type=type;this.data=data;this.dims=dims;}},InferenceSession:{create:async()=>({
         run:async()=>{const data=new Float32Array(3082);data.fill(-100);data[0]=100;return {logits:{data}};}
       })}};
     });
@@ -218,6 +218,7 @@ async function main(){
     }));
     await mocked.goto(URL,{waitUntil:'domcontentloaded'});
     await drawWithMouse(mocked);
+    assert.equal(await strokeCount(mocked),1,'mock inference has real input strokes');
     await mocked.locator('#recognize').click();
     await mocked.getByText('1글자 인식 완료',{exact:false}).waitFor();
     assert.match(await mocked.locator('#composition').textContent(),/あ/);
