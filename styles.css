@@ -245,7 +245,7 @@ button:disabled {opacity:.44}
   .logo-mark {width:40px;height:40px}
   .logo-copy strong {font-size:19px}
   .logo-copy small {font-size:10px}
-  .navgroup {width:100%;margin-left:0;overflow-x:auto}
+  .sidebar .navgroup {display:block;width:100%;margin-left:0;overflow-x:auto}
   .nav-list {display:flex;min-width:max-content;gap:5px}
   .nav-item {padding:0 11px;font-size:12px;min-height:42px}
   .nav-item svg {width:16px;height:16px}
@@ -267,7 +267,7 @@ button:disabled {opacity:.44}
   .canvas-actions {width:100%;justify-content:space-between}
   .canvas-scroll-controls {flex:1}
   .grid-progress {min-width:76px}
-  .canvas-tip {width:100%}
+  .canvas-tip {display:flex;width:100%}
   .statusline {padding:13px 14px}
   .composer-body,.editor-body {padding:0 16px 19px}
   .composition-bar {padding:11px;min-height:77px}
