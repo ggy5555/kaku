@@ -107,6 +107,19 @@ async function main(){
     assert.equal(await strokeCount(page),0,'pen-only filters mouse');
     await page.locator('#pen-only').uncheck();await drawWithMouse(page);
     assert.equal(await strokeCount(page),1,'mouse draws');
+    await page.locator('#clear-ink').click();
+    // Synthetic touch verifies that the non-pen pointer path is still accepted.
+    await page.evaluate(()=>{
+      const el=document.getElementById('ink-canvas'),r=el.getBoundingClientRect();
+      const send=(type,buttons)=>el.dispatchEvent(new PointerEvent(type,{
+        bubbles:true,cancelable:true,pointerId:66,pointerType:'touch',isPrimary:true,
+        button:0,buttons,pressure:buttons?.5:0,clientX:r.left+28,clientY:r.top+80
+      }));
+      send('pointerdown',1);send('pointerup',0);
+    });
+    assert.equal(await strokeCount(page),1,'touch pointer draws');
+    await page.locator('#clear-ink').click();
+    await drawWithMouse(page);
     await page.locator('#tool-erase').click();
     assert.equal(await page.locator('#tool-erase').getAttribute('aria-pressed'),'true');
     await drawWithMouse(page);
@@ -126,6 +139,9 @@ async function main(){
     await composer.locator('.phrase-join').first().click();
     assert.equal(await composer.locator('.phrase').count(),initial,'phrase join');
     await composer.locator('.phrase').first().click();
+    await page.locator('#candidate-manual').fill('今日');
+    await page.locator('#apply-manual').click();
+    assert.match(await composer.locator('.phrase').first().textContent(),/今日/,'manual correction');
     const suggested=page.locator('#candidates .candidate').filter({hasText:'今日は'}).first();
     await suggested.click();
     assert.equal(await suggested.getAttribute('aria-pressed'),'true');
@@ -138,6 +154,8 @@ async function main(){
     assert.match(await page.locator('#text-editor').inputValue(),/今日は/,'draft reload');
     await page.locator('#save-note').click();
     assert.ok((await page.locator('#archive-list .archive-entry').count())>=1,'saved snapshot');
+    await page.locator('#archive-list .archive-entry .actions button').first().click();
+    assert.match(await page.locator('#text-editor').inputValue(),/今日は/,'load snapshot');
     const dl=page.waitForEvent('download');
     await page.locator('#export-txt').click();
     const download=await dl;
@@ -169,12 +187,18 @@ async function main(){
 
     // Controlled ONNX network failure falls back to manual dialog.
     await page.setViewportSize({width:1440,height:900});
+    // Width changes retain horizontal scroll state: reset before a pointer test.
+    await page.locator('#canvas-window').evaluate(el=>{el.scrollLeft=0;});
     await page.route('**/onnxruntime-web@1.20.1/dist/ort.min.js',r=>r.abort());
     await drawWithMouse(page);
+    assert.equal(await strokeCount(page),1,'model error scenario has one ink stroke');
     await page.locator('#recognize').click();
     await page.locator('#manual-dialog:not(.hide)').waitFor();
     assert.match(await page.locator('#status-text').textContent(),/모델을 불러오지 못했습니다/);
-    console.log('PASS model error fallback');
+    await page.locator('#manual-compose').fill('にほんご');
+    await page.locator('#confirm-dialog').click();
+    assert.match(await page.locator('#composition').textContent(),/にほんご/,'manual input fallback');
+    console.log('PASS model error and manual fallback');
     assert.deepEqual(errors,[],'no uncaught browser errors');
 
     // A separate mock checks the ONNX recognition wiring; it is NOT a real model test.
